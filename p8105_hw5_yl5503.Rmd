@@ -1,0 +1,48 @@
+---
+title: "P8105 HW 5"
+author: "Yuki Low (yl5503)"
+date: "11/6/2023"
+output:
+  html_document:
+    df_print: paged
+---
+
+Loading necessary libraries
+```{r, message = FALSE}
+library(tidyverse)
+library(haven)
+library(readxl)
+library(janitor)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(broom)
+library(purrr)
+```
+
+```{r, message = FALSE}
+
+```
+
+
+```{r}
+library(tidyverse)
+
+set.seed(123)
+n <- 30
+sigma <- 5
+alpha <- 0.05
+true_values <- c(0)
+num_simulations <- 5000
+
+datasets <- replicate(num_simulations, rnorm(n, mean = true_values, sd = sigma))
+
+column_means <- numeric(length = ncol(datasets))
+
+for (i in 1:ncol(datasets)) {
+  column_means[i] <- mean(datasets[, i], na.rm = TRUE)
+}
+
+
+
+```
