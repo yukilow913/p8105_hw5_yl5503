@@ -41,4 +41,5 @@ ggplot(combined_df, aes(x = week, y = observation, group = ID, color = arm)) +
   labs(x = "Week", y = "Observation", color = "Arm", title = "Spaghetti Plot of Observations Over Time" )
 ```
 
+From the spaghetti plot, we can see that, on average, the observations for the experimental arm are higher than the observations for the control arm. We can also see that over the weeks, the observations for the experimental are increasing whereas the observations for the control arm are relatively stable.
 
