@@ -21,28 +21,24 @@ library(purrr)
 ```
 
 ```{r, message = FALSE}
+complete_data <- list.files(path = "data", pattern = "csv", full.names = TRUE)
 
+combined_df <- purrr::map(complete_data, read_csv) %>% 
+  bind_rows() %>% 
+  mutate(arm = as.factor(if_else(row_number() %in% c(1:10), "control", "experimental")),
+  ID = row_number ()) %>%
+  relocate(arm, ID, .before = "week_1") %>%
+  pivot_longer (cols = week_1:week_8, names_to = "week", values_to = "observation") %>%
+  separate(week, into = c("prefix", "week"), sep = "_") %>%
+  mutate(week = as.integer(week)) %>%
+  select(-prefix)
+
+head(combined_df)
+```
+```{r, message = FALSE}
+ggplot(combined_df, aes(x = week, y = observation, group = ID, color = arm)) +
+  geom_line() +
+  labs(x = "Week", y = "Observation", color = "Arm", title = "Spaghetti Plot of Observations Over Time" )
 ```
 
 
-```{r}
-library(tidyverse)
-
-set.seed(123)
-n <- 30
-sigma <- 5
-alpha <- 0.05
-true_values <- c(0)
-num_simulations <- 5000
-
-datasets <- replicate(num_simulations, rnorm(n, mean = true_values, sd = sigma))
-
-column_means <- numeric(length = ncol(datasets))
-
-for (i in 1:ncol(datasets)) {
-  column_means[i] <- mean(datasets[, i], na.rm = TRUE)
-}
-
-
-
-```
