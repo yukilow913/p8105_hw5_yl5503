@@ -20,6 +20,7 @@ library(broom)
 library(purrr)
 ```
 
+#Question 2
 ```{r, message = FALSE}
 complete_data <- list.files(path = "data", pattern = "csv", full.names = TRUE)
 
@@ -43,3 +44,29 @@ ggplot(combined_df, aes(x = week, y = observation, group = ID, color = arm)) +
 
 From the spaghetti plot, we can see that, on average, the observations for the experimental arm are higher than the observations for the control arm. We can also see that over the weeks, the observations for the experimental are increasing whereas the observations for the control arm are relatively stable.
 
+#Question 3 
+
+```{r, warning=FALSE, message=FALSE}
+set.seed(123)
+
+t_test <- function(mu = 0) {
+  sample <- tibble(rnorm(n = 30, mean = mu, sd = 5))
+  
+  results <- t.test(sample) %>% 
+    broom::tidy() %>% 
+    select(estimate, p.value)
+  results
+}
+
+# mean = 0
+mean_0 <- expand_grid(mean = 0, 
+                      iteration = 1:5000) %>% 
+  mutate(results = map(mean, t_test)) %>% 
+  unnest(results)
+
+# mean = 1,2,3,4,5,6
+mean_all <- expand_grid(mean = 1:6, 
+                        iteration = 1:5000) %>% 
+  mutate(results = map(mean, t_test)) %>% 
+  unnest(results)
+```

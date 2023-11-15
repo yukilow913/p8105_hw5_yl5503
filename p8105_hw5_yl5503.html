@@ -1637,6 +1637,7 @@ library(tidyr)
 library(stringr)
 library(broom)
 library(purrr)</code></pre>
+<p>#Question 2</p>
 <pre class="r"><code>complete_data &lt;- list.files(path = &quot;data&quot;, pattern = &quot;csv&quot;, full.names = TRUE)
 
 combined_df &lt;- purrr::map(complete_data, read_csv) %&gt;% 
@@ -1664,6 +1665,29 @@ observations for the experimental arm are higher than the observations
 for the control arm. We can also see that over the weeks, the
 observations for the experimental are increasing whereas the
 observations for the control arm are relatively stable.</p>
+<p>#Question 3</p>
+<pre class="r"><code>set.seed(123)
+
+t_test &lt;- function(mu = 0) {
+  sample &lt;- tibble(rnorm(n = 30, mean = mu, sd = 5))
+  
+  results &lt;- t.test(sample) %&gt;% 
+    broom::tidy() %&gt;% 
+    select(estimate, p.value)
+  results
+}
+
+# mean = 0
+mean_0 &lt;- expand_grid(mean = 0, 
+                      iteration = 1:5000) %&gt;% 
+  mutate(results = map(mean, t_test)) %&gt;% 
+  unnest(results)
+
+# mean = 1,2,3,4,5,6
+mean_all &lt;- expand_grid(mean = 1:6, 
+                        iteration = 1:5000) %&gt;% 
+  mutate(results = map(mean, t_test)) %&gt;% 
+  unnest(results)</code></pre>
 
 
 
