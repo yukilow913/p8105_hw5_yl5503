@@ -58,15 +58,60 @@ t_test <- function(mu = 0) {
   results
 }
 
-# mean = 0
 mean_0 <- expand_grid(mean = 0, 
                       iteration = 1:5000) %>% 
   mutate(results = map(mean, t_test)) %>% 
   unnest(results)
 
-# mean = 1,2,3,4,5,6
-mean_all <- expand_grid(mean = 1:6, 
+mean_rest <- expand_grid(mean = 1:6, 
                         iteration = 1:5000) %>% 
   mutate(results = map(mean, t_test)) %>% 
   unnest(results)
 ```
+
+```{r, warning=FALSE, message=FALSE}
+mean_rest %>%
+  group_by(mean) %>% 
+  summarize(prop_rejected = sum(p.value < 0.05)/5000) %>% 
+  ggplot(aes(x = mean, y = prop_rejected)) + 
+  geom_point() + 
+  geom_path() +
+  scale_x_continuous(limits = c(1,6), breaks = seq(1,6,1)) + 
+  labs(x = "True μ", y = "Power", title = "Power vs. True μ")
+```
+As effect size increases, statistical power also increases.
+
+```{r}
+avg_estimate <- mean_rest %>% 
+  group_by(mean) %>% 
+  summarize(average_estimate = mean(estimate, na.rm = T)) %>% 
+  ungroup()
+
+avg_estimate
+```
+
+```{r}
+avg_rejected_estimate <- mean_rest %>% 
+  filter(p.value < 0.05) %>% 
+  group_by(mean) %>% 
+  summarize(average_estimate = mean(estimate, na.rm = T)) %>% 
+  ungroup()
+
+avg_rejected_estimate
+```
+
+```{r}
+ggplot(avg_estimate, aes(x = mean, y = average_estimate)) +
+  geom_line(data = avg_estimate, aes(color = "pink")) +
+  geom_line(data = avg_rejected_estimate, aes(color = "cyan")) +
+  scale_color_manual(name = " ", values = c("cyan" = "cyan", "pink" = "pink"),
+                     labels = c('Rejected Estimates','All Estimates')) +
+  geom_point(data = avg_estimate, color = "pink") +
+  geom_point(data = avg_rejected_estimate, color = "cyan") +
+  scale_x_continuous(limits = c(1,6), breaks = seq(1,6,1)) +
+  labs(x = " True μ", y = "Average Estimate of μ", title = "Average Estimate of μ vs. True μ")
+```
+
+For the rejected estimates, the average estimates of mean approached the true mean as the true mean increased. For all estimates, the average estimates of the mean matched the true mean. 
+
+
