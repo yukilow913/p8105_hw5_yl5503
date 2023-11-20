@@ -9,6 +9,7 @@ Loading necessary libraries
 ```{r, message = FALSE}
 library(tidyverse)
 library(haven)
+library(dplyr)
 library(readxl)
 library(janitor)
 library(dplyr)
